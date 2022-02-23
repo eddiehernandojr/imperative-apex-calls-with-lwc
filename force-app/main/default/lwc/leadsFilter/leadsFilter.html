@@ -11,6 +11,9 @@
             <template if:true={leads}>
                 <lightning-datatable key-field="id" data={leads} columns={columns} hide-checkbox-column></lightning-datatable>
             </template>
+            <template if:false={leads}>
+                No items to display.
+            </template>
             <template if:true={error}>
                 <c-error-panel errors={error}></c-error-panel>
             </template>
