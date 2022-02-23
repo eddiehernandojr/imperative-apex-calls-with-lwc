@@ -1,4 +1,3 @@
-//TODO 4: Necessary imports
 import { LightningElement, wire } from 'lwc';
 import getAllLeads from '@salesforce/apex/LeadsController.getAllLeads';
 import getOpenNotContactedLeads from '@salesforce/apex/LeadsController.getOpenNotContactedLeads';
@@ -6,20 +5,25 @@ import getWorkingContactedLeads from '@salesforce/apex/LeadsController.getWorkin
 import getClosedConvertedLeads from '@salesforce/apex/LeadsController.getClosedConvertedLeads';
 import getClosedNotConvertedLeads from '@salesforce/apex/LeadsController.getClosedNotConvertedLeads';
 
-//TODO 5: Specify the fields to be used for the columns
+import NAME_FIELD from '@salesforce/schema/Lead.Name';
+import COMPANY_FIELD from '@salesforce/schema/Lead.Company';
+import EMAIL_FIELD from '@salesforce/schema/Lead.Email';
+import PHONE_FIELD from '@salesforce/schema/Lead.Phone';
+import STATUS_FIELD from '@salesforce/schema/Lead.Status';
+
 const COLUMNS = [
-    { label: 'Name', fieldName: 'Name' },
-    { label: 'Company', fieldName: 'Company' },
-    { label: 'Email', fieldName: 'Email', type: 'email' },
-    { label: 'Phone', fieldName: 'Phone', type: 'phone' },
-    { label: 'Status', fieldName: 'Status' },
+    { label: 'Name', fieldName: NAME_FIELD.fieldApiName },
+    { label: 'Company', fieldName: COMPANY_FIELD.fieldApiName },
+    { label: 'Email', fieldName: EMAIL_FIELD.fieldApiName, type: 'email' },
+    { label: 'Phone', fieldName: PHONE_FIELD.fieldApiName, type: 'phone' },
+    { label: 'Status', fieldName: STATUS_FIELD.fieldApiName },
 ];
 
 export default class LeadsFilter extends LightningElement {
     columns = COLUMNS;
     leads;
     error;
-
+    
     @wire(getAllLeads)
     allLeads;
 
@@ -35,25 +39,65 @@ export default class LeadsFilter extends LightningElement {
     @wire(getClosedNotConvertedLeads)
     closedNotConvertedLeads;
 
-    //TODO 6: Create an event handler for each Apex method
-
+    // TODO1: Create 5 event handlers, one for each method in the Apex controller. 
+    // TODO2: Ensure that any error in the event handlers are caught.
     handleClickAll(event) {
-        this.leads = this.allLeads.data;
+        const { data, error } = this.allLeads;
+
+        if (data) {
+            this.leads = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.leads = undefined;
+        }
     }
 
     handleClickOpenNotContactedLeads(event) {
-        this.leads = this.openNotContactedLeads.data;
+        const { data, error } = this.openNotContactedLeads;
+
+        if (data) {
+            this.leads = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.leads = undefined;
+        }
     }
 
     handleClickWorkingContactedLeads(event) {
-        this.leads = this.workingContactedLeads.data;
+        const { data, error } = this.workingContactedLeads;
+
+        if (data) {
+            this.leads = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.leads = undefined;
+        }
     }
     
     handleClickClosedConvertedLeads(event) {
-        this.leads = this.closedConvertedLeads.data;
+        const { data, error } = this.closedConvertedLeads;
+
+        if (data) {
+            this.leads = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.leads = undefined;
+        }
     }
 
     handleClickClosedNotConvertedLeads(event) {
-        this.leads = this.closedNotConvertedLeads.data;
+        const { data, error } = this.closedNotConvertedLeads;
+
+        if (data) {
+            this.leads = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.leads = undefined;
+        }
     }
 }
