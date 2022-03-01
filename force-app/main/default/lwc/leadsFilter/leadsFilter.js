@@ -1,4 +1,4 @@
-import { LightningElement, wire } from 'lwc';
+import { LightningElement } from 'lwc';
 import getAllLeads from '@salesforce/apex/LeadsController.getAllLeads';
 import getOpenNotContactedLeads from '@salesforce/apex/LeadsController.getOpenNotContactedLeads';
 import getWorkingContactedLeads from '@salesforce/apex/LeadsController.getWorkingContactedLeads';
@@ -23,81 +23,43 @@ export default class LeadsFilter extends LightningElement {
     columns = COLUMNS;
     leads;
     error;
-    
-    @wire(getAllLeads)
-    allLeads;
 
-    @wire(getOpenNotContactedLeads)
-    openNotContactedLeads;
+    // This code is patterned after Handling Errors When Calling a Function Imperatively and
+    // Handle Errors in the accountList Component which is found in the link below.
+    // Reference:
+    // https://trailhead.salesforce.com/en/content/learn/modules/lightning-web-components-and-salesforce-data/handle-server-errors?trail_id=build-lightning-web-components
 
-    @wire(getWorkingContactedLeads)
-    workingContactedLeads;
-
-    @wire(getClosedConvertedLeads)
-    closedConvertedLeads;
-
-    @wire(getClosedNotConvertedLeads)
-    closedNotConvertedLeads;
-
-    // TODO1: Create 5 event handlers, one for each method in the Apex controller. 
-    // TODO2: Ensure that any error in the event handlers are caught.
-    handleClickAll(event) {
-        const { data, error } = this.allLeads;
-
-        if (data) {
-            this.leads = data;
-            this.error = undefined;
-        } else if (error) {
-            this.error = error;
-            this.leads = undefined;
-        }
+    // When the handleClickAll method is invoked by the framework, we invoke the handleClickAll Apex method imperatively to get all leads.
+    // The imperative Apex call returns a promise. If the Apex method call is successful, the promise is fulfilled and the then method runs. 
+    // Otherwise, the promise is rejected and the catch method runs.
+    handleClickAll() {
+        this.processLeadsAndError(getAllLeads());
     }
 
-    handleClickOpenNotContactedLeads(event) {
-        const { data, error } = this.openNotContactedLeads;
-
-        if (data) {
-            this.leads = data;
-            this.error = undefined;
-        } else if (error) {
-            this.error = error;
-            this.leads = undefined;
-        }
+    handleClickOpenNotContactedLeads() {
+        this.processLeadsAndError(getOpenNotContactedLeads());
     }
 
-    handleClickWorkingContactedLeads(event) {
-        const { data, error } = this.workingContactedLeads;
-
-        if (data) {
-            this.leads = data;
-            this.error = undefined;
-        } else if (error) {
-            this.error = error;
-            this.leads = undefined;
-        }
-    }
-    
-    handleClickClosedConvertedLeads(event) {
-        const { data, error } = this.closedConvertedLeads;
-
-        if (data) {
-            this.leads = data;
-            this.error = undefined;
-        } else if (error) {
-            this.error = error;
-            this.leads = undefined;
-        }
+    handleClickWorkingContactedLeads() {
+        this.processLeadsAndError(getWorkingContactedLeads());
     }
 
-    handleClickClosedNotConvertedLeads(event) {
-        const { data, error } = this.closedNotConvertedLeads;
+    handleClickClosedConvertedLeads() {
+        this.processLeadsAndError(getClosedConvertedLeads());
+    }
 
-        if (data) {
-            this.leads = data;
+    handleClickClosedNotConvertedLeads() {
+        this.processLeadsAndError(getClosedNotConvertedLeads());
+    }
+
+    processLeadsAndError(prom) {
+        prom.then(result => {
+            this.leads = result;
             this.error = undefined;
-        } else if (error) {
+        })
+        .catch(error => {
             this.error = error;
             this.leads = undefined;
-        }
+        });
     }
 }
